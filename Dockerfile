@@ -9,7 +9,4 @@ COPY package.json ./
 RUN npm install --omit=dev
 COPY . .
 
-# Persistent volume mount point for db.json (attach a Railway volume here)
-VOLUME ["/data"]
-
 CMD ["node", "src/index.js"]
