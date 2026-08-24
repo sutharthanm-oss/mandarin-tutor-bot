@@ -21,17 +21,30 @@ function formatSentenceMessage(sentence, level, { retry } = {}) {
   if (sentence.manglish) {
     lines.push('', `💬 As you'd actually hear it in KL: _${sentence.manglish}_`);
   }
+  if (Array.isArray(sentence.breakdown) && sentence.breakdown.length) {
+    lines.push('', '📖 *Word by word:*');
+    for (const w of sentence.breakdown) {
+      lines.push(`${w.word} (${w.pinyin}) — ${w.meaning}`);
+    }
+  }
   lines.push('', '🎙️ Listen above, then send your own voice note reading it out loud.');
   return lines.join('\n');
 }
 
 async function sendSentencePush(bot, chatId, sentence, level, opts) {
   const caption = formatSentenceMessage(sentence, level, opts);
+  const captionFits = caption.length <= 1024; // Telegram's hard limit on media captions
   let mp3Path, oggPath;
   try {
     mp3Path = await generateSpeech(sentence.hanzi);
     oggPath = await convertToOggOpus(mp3Path);
-    await bot.telegram.sendVoice(chatId, { source: oggPath }, { caption, parse_mode: 'Markdown' });
+    if (captionFits) {
+      await bot.telegram.sendVoice(chatId, { source: oggPath }, { caption, parse_mode: 'Markdown' });
+    } else {
+      // Breakdown pushed it over Telegram's caption limit — send voice plain, text as follow-up.
+      await bot.telegram.sendVoice(chatId, { source: oggPath });
+      await bot.telegram.sendMessage(chatId, caption, { parse_mode: 'Markdown' });
+    }
   } catch (err) {
     console.error('[dailySentence] TTS voice note failed, falling back to text only:', err.message);
     await bot.telegram.sendMessage(chatId, caption, { parse_mode: 'Markdown' });
