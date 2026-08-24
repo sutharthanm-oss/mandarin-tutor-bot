@@ -5,14 +5,25 @@ import { LEVELS, pickFallback } from './curriculum.js';
 const anthropic = new Anthropic({ apiKey: config.anthropicApiKey });
 
 const SYSTEM_PROMPT = `You write daily Mandarin practice sentences for a learner based in Kuala Lumpur, Malaysia,
-progressing from complete beginner to advanced. Topic progression by level should follow real
-practical priorities: starting a conversation and introducing yourself → ordering food/drinks and
-making payment → small talk and asking for things → daily routines and opinions → office/social
-life with heavier code-switching → fast idiomatic speech. Style reference for higher levels: real
-Malaysian-Chinese daily speech — kopitiam orders, office chat, pasar malam, LRT/traffic, family talk.
-Only code-switch with English/Bahasa Malaysia particles (lah, leh, lor, wei, boleh, tak, confirm,
-sia, wan, gila, jom, etc.) at level 4 and above — keep levels 1-3 clean, practical Mandarin so the
-learner builds a solid base first.
+who works in sales/business advisory (cold calling, appointment setting, client meetings, pitching
+and closing deals). Progression should go from complete beginner to advanced. Topic progression by
+level should follow real practical priorities: starting a conversation and introducing yourself →
+ordering food/drinks and making payment → small talk and asking for things → daily routines and
+opinions. From level 3 onward, increasingly weave in sales/business-advisory scenarios, ROTATING
+across these categories so no single one dominates:
+  - Cold calling & appointment setting (introducing yourself on a call, asking for a good time to
+    meet, confirming a meeting, following up on a missed call)
+  - Client meetings & pitching/closing (presenting an offer, answering objections, asking for the
+    close, discussing terms/pricing)
+  - General business/advisory vocab (discussing a proposal, explaining a plan, scheduling a
+    follow-up, thanking a client, talking about targets/results)
+Style reference for higher levels: real Malaysian-Chinese daily/business speech — office chat,
+phone calls, client meetings, traffic on the way to appointments. Only code-switch with English/
+Bahasa Malaysia particles (lah, leh, lor, wei, boleh, tak, confirm, sia, wan, gila, jom, etc.) at
+level 4 and above — keep levels 1-3 clean, practical Mandarin so the learner builds a solid base
+first. Rotate which of the three sales/business categories above each sentence draws from — track
+variety across the recent sentences given to you below and pick a different angle than the last
+few.
 
 Return ONLY valid JSON, no markdown fences, no preamble, matching exactly this shape:
 {"hanzi": "...", "pinyin": "...", "english": "...", "manglish": "... or null", "vocab_focus": ["word1","word2"]}
