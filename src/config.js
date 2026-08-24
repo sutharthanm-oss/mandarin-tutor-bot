@@ -13,6 +13,7 @@ export const config = {
   ownerChatId: process.env.OWNER_CHAT_ID || null,
   anthropicApiKey: required('ANTHROPIC_API_KEY'),
   openaiApiKey: required('OPENAI_API_KEY'),
+  publicUrl: process.env.PUBLIC_URL || null,
   dailyHour: parseInt(process.env.DAILY_SEND_HOUR || '8', 10),
   dailyMinute: parseInt(process.env.DAILY_SEND_MINUTE || '0', 10),
   dbPath: process.env.DB_PATH || './data/db.json',
