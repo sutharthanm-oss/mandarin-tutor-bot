@@ -21,18 +21,20 @@ function formatSentenceMessage(sentence, level, { retry } = {}) {
   if (sentence.manglish) {
     lines.push('', `💬 As you'd actually hear it in KL: _${sentence.manglish}_`);
   }
-  lines.push('', '🎙️ Listen to the voice note above, then send your own reading it out loud.');
+  lines.push('', '🎙️ Listen above, then send your own voice note reading it out loud.');
   return lines.join('\n');
 }
 
-async function sendSentenceVoiceNote(bot, chatId, hanzi) {
+async function sendSentencePush(bot, chatId, sentence, level, opts) {
+  const caption = formatSentenceMessage(sentence, level, opts);
   let mp3Path, oggPath;
   try {
-    mp3Path = await generateSpeech(hanzi);
+    mp3Path = await generateSpeech(sentence.hanzi);
     oggPath = await convertToOggOpus(mp3Path);
-    await bot.telegram.sendVoice(chatId, { source: oggPath });
+    await bot.telegram.sendVoice(chatId, { source: oggPath }, { caption, parse_mode: 'Markdown' });
   } catch (err) {
-    console.error('[dailySentence] TTS voice note failed, continuing with text only:', err.message);
+    console.error('[dailySentence] TTS voice note failed, falling back to text only:', err.message);
+    await bot.telegram.sendMessage(chatId, caption, { parse_mode: 'Markdown' });
   } finally {
     [mp3Path, oggPath].forEach(p => {
       if (p && fs.existsSync(p)) fs.unlinkSync(p);
@@ -46,12 +48,7 @@ export async function pushSentence(bot, chatId) {
 
   // Still on an unpassed sentence from before — resend it verbatim, do NOT advance.
   if (user.currentSentence && !user.currentSentence.passed) {
-    await sendSentenceVoiceNote(bot, chatId, user.currentSentence.hanzi);
-    await bot.telegram.sendMessage(
-      chatId,
-      formatSentenceMessage(user.currentSentence, user.level, { retry: true }),
-      { parse_mode: 'Markdown' }
-    );
+    await sendSentencePush(bot, chatId, user.currentSentence, user.level, { retry: true });
     return;
   }
 
@@ -69,6 +66,5 @@ export async function pushSentence(bot, chatId) {
   };
   await saveDb();
 
-  await sendSentenceVoiceNote(bot, chatId, sentence.hanzi);
-  await bot.telegram.sendMessage(chatId, formatSentenceMessage(sentence, user.level), { parse_mode: 'Markdown' });
+  await sendSentencePush(bot, chatId, sentence, user.level, {});
 }
