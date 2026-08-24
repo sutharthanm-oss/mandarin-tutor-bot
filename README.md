@@ -1,12 +1,14 @@
 # Mandarin Tutor (Telegram) — Malaysian flavor
 
-Every morning: one Mandarin sentence pushed to you — **as a voice note (native TTS reading) plus
-text** (hanzi, pinyin, English). You record yourself saying it back as a voice note. The bot tells
-you in plain English what to fix — no scores, no numbers shown. **You must pass before moving
-on**: if you don't clear today's sentence, the exact same sentence (and its voice note) is
-resent the next morning instead of a new one. Difficulty starts at greetings/introductions and
-ramps toward ordering food & payment → small talk → daily life/opinions → office chat with
-Malaysian code-switching, auto-advancing roughly every 7 passed sentences.
+Every morning: one Mandarin sentence pushed to you as **a single message — voice note (native TTS
+reading) with the hanzi/pinyin/English as its caption**. You record yourself saying it back as a
+voice note. The bot tells you in plain English what to fix — no scores, no numbers shown. **You
+must pass before moving on**: if you don't clear today's sentence, the exact same sentence (and
+voice note) is resent the next morning instead of a new one. Difficulty starts at greetings/
+introductions, ramps through ordering food & payment → small talk, then from level 3 onward
+increasingly rotates through **sales/business-advisory scenarios** (cold calling & appointment
+setting, client meetings & pitching/closing, general business/advisory chat) with Malaysian
+code-switching from level 4, auto-advancing roughly every 7 passed sentences.
 
 ## Get 2 credentials first
 
