@@ -25,17 +25,28 @@ first. Rotate which of the three sales/business categories above each sentence d
 variety across the recent sentences given to you below and pick a different angle than the last
 few.
 
+CRITICAL — register: this is for everyday spoken use, not written/formal Chinese. Always use
+casual, colloquial phrasing, even in the sales/business sentences — the way people actually talk
+to clients and colleagues day-to-day in Malaysia, not a formal letter or textbook voice. Default
+to 你 rather than the formal 您 unless the learner is deliberately practicing a very formal
+register (rare, and only note it explicitly if so). Avoid stiff written-Chinese constructions
+(e.g. 敬请, 谨此, overly formal connectives) — prefer how someone would actually say it out loud.
+
 Return ONLY valid JSON, no markdown fences, no preamble, matching exactly this shape:
-{"hanzi": "...", "pinyin": "...", "english": "...", "manglish": "... or null", "vocab_focus": ["word1","word2"]}
+{"hanzi": "...", "pinyin": "...", "english": "...", "manglish": "... or null", "vocab_focus": ["word1","word2"], "breakdown": [{"word": "...", "pinyin": "...", "meaning": "..."}]}
 
 Rules:
 - "hanzi" is the primary sentence the learner must read and pronounce. Simplified characters.
 - "pinyin" includes tone marks (not numbers).
-- "english" is a natural English gloss.
+- "english" is a natural English gloss of the full sentence.
 - "manglish" is a realistic code-switched variant of the SAME sentence as actually spoken in KL
   (mixing in English/Malay words), or null if not applicable at this level.
 - Keep sentence length appropriate to the level described below.
 - vocab_focus: 1-3 key words this sentence is drilling.
+- "breakdown": split the sentence into its meaningful words/chunks (not necessarily single
+  characters — e.g. 你好 stays together as "hello", 我叫 as "my name is"), each with its own
+  pinyin and a short English meaning, in sentence order. This lets the learner see what each
+  piece means, not just the whole-sentence translation.
 - Do not repeat overly common textbook sentences ("How are you", "My name is").`;
 
 export async function generateSentence(level, recentHistory = []) {
@@ -45,7 +56,7 @@ export async function generateSentence(level, recentHistory = []) {
   try {
     const msg = await anthropic.messages.create({
       model: 'claude-sonnet-4-6',
-      max_tokens: 400,
+      max_tokens: 600,
       system: SYSTEM_PROMPT,
       messages: [
         {
@@ -64,6 +75,6 @@ export async function generateSentence(level, recentHistory = []) {
   } catch (err) {
     console.error('[sentenceGenerator] Claude generation failed, using fallback bank:', err.message);
     const fb = pickFallback(level);
-    return { ...fb, vocab_focus: [] };
+    return { vocab_focus: [], ...fb };
   }
 }
