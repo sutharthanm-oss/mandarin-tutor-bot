@@ -1,12 +1,19 @@
-import OpenAI from 'openai';
+import OpenAI, { toFile } from 'openai';
 import fs from 'fs';
 import { config } from './config.js';
 
 const openai = new OpenAI({ apiKey: config.openaiApiKey });
 
+// Buffers the file fully and wraps it with OpenAI's toFile() helper rather than
+// passing a live fs.createReadStream directly. Streaming a raw ReadStream as the
+// upload body can trip Node's fetch/undici layer in some container environments
+// (surfaces as a generic "Connection error." with no further detail) — sending a
+// fully-buffered file avoids that class of failure entirely.
 export async function transcribeMandarin(wavPath) {
+  const buffer = fs.readFileSync(wavPath);
+  const file = await toFile(buffer, 'audio.wav');
   const transcription = await openai.audio.transcriptions.create({
-    file: fs.createReadStream(wavPath),
+    file,
     model: 'whisper-1',
     language: 'zh',
   });
